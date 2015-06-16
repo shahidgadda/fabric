@@ -99,5 +99,6 @@ def remote_dump():
 Collects all static files
 '''
 def collectstatic():
-  local('python manage.py collectstatic')
+  with cd(env.dir):
+    run('python manage.py collectstatic')
 
