@@ -32,6 +32,7 @@ def deploy(branch_name):
   with cd(env.dir):
     run('git checkout %s && git merge %s' %(branch,branch_name))
     restart()
+
 '''
 Installs the requirements on the remote Virtual Environment
 '''
@@ -39,6 +40,8 @@ def install():
   with cd(env.dir):
     run("pip install -r requirements.txt")
     pass
+    
+
 '''
 Activates the Virtual Environment on remote machine
 '''
@@ -46,14 +49,16 @@ def activate():
   run(env.activate)
   pass
 
+
 '''
 Restarts the remote machine
 '''
 def restart():
-  local('sudo service apache2 reload')
+  run('sudo service apache2 reload')
+
 
 '''
-Drop the old database , creates the new Database and synchronises the
+Drops the old database , creates the new Database and synchronises the
 new model changes.
 Caution : Be careful using this fab function it will delete all the data in the
 database
@@ -66,6 +71,7 @@ def rebuild_db():
   run('mysql -u %s -p%s -e "create database %s"' % (env.db_user,
     env.db_passwd, env.db_schema))
   run('python manage.py syncdb')
+
 
 '''
 Runs a query on your desired Database on remote machine from your local machine
@@ -84,6 +90,7 @@ def kill():
   kill = raw_input("Enter the name of process you want to kill: ")
   run('pkill -f %s' %(kill))
 
+
 '''
 Takes the dump of the remote database and transfers the dump on your local machine
 '''
@@ -94,6 +101,7 @@ def remote_dump():
     env.dbname,env.rdir,env.dump))
   env.dump1 = raw_input("Enter the name you want to assign to local dump : ")
   get(env.rdir+"/"+env.dump+".sql",env.ldir+"/"+env.dump1+"."+env.host)
+
 
 '''
 Collects all static files
